@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../style-c.css">
+<link rel="stylesheet" href="Fonts/JetBrainsMono.ttf">
+<link rel="icon" href="../../Images/cPythonist.png">
+<head>
+    <title>Documentation — Second-1.0 — CPythonist</title>
+</head>
+<body>
+    <!-- <ul>
+        <li class="liForNavbar">
+            <a href="index.html">
+                <img src="cPythonist.png" class="logoImage">
+            </a>
+            <a class="navbarPresent" href="index.html">Home</a>
+            <a class="navbar" href="second.html">Second</a>
+            <a class="navbar" href="otherProjects.html">Other Projects</a>
+            <a class="navbar" href="contact.html">Contact</a>
+        </li>
+        <div class="lineNavbarBottom"></div>
+    </ul> -->
+
+
+    <!--    NAVIGATION BAR    -->
+    <div id="navigationDiv">
+        <ul class="navbar">
+            <li class="navbar">
+                <a href="../../index-c.html">
+                    <img src="../../Images/cPythonist.png" class="navbar">
+                </a>
+                <a href="../../index-c.html" class="navbar">Home</a>
+                <a href="../../second.html" class="navbar">Second</a>
+                <a href="../../otherProjects.html" class="navbar">Other projects</a>
+                <a href="../../contact.html" class="navbar">Contact</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="verticalPageAccess">
+        <a href="#COPY">COPY</a>
+        <a href="#MKDIR">MKDIR</a>
+        <a href="#SHUTDOWN">SHUTDOWN</a>
+        <a href="#DATE">DATE</a>
+        <a href="#ECHO">ECHO</a>
+        <a href="#EXIT">EXIT</a>
+        <a href="#HELP">HELP</a>
+        <a href="#RMDIR">RMDIR</a>
+        <a href="#TIME">TIME</a>
+        <a href="#SECOND">SECOND</a>
+        <a href="#CD">CD</a>
+    </div>
+
+    <!--    MAIN CONTENT    -->
+    <div>
+        <h1>CPythonist</h1>
+        <h2>SECOND-1.0 DOCUMENTATION</h2>
+        <div class="mainContentWidthAdj">
+            <br>
+            <div id="COPY"><h3>COPY</h3></div>
+            <p style="margin-left:5%; padding-bottom: 3%;">
+This command allows the user to copy any file or directory from a location to another.<br>
+Once COPY command is activated, input file/directory must be given. The program checks if the input file/directory exists.<br>
+If it exists, then output destination is to be given. If output directory is also exists, then command is carried out, provided 
+<i>permissions are available for read and write</i>, and other factors. If not, process is terminated.
+            </p>
+            <div id="MKDIR"><h3>MKDIR</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+This command allows the user to create a new folder.<br>
+After MKDIR command is activated, directory in which new folder has to created must be inputted.<br>
+If the directory exists, name of the new directory must be inputted, which is checked for illegal characters.<br>
+If these <i>two checks are passed</i>, the program creates a new folder, provided <i>permission and other factors are 
+available for read and write processes</i>.
+            </p>
+            <div id="SHUTDOWN"><h3>SHUTDOWN</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+SHUTDOWN command allows the user to shutdown the computer (with fast startup enabled).
+            </p>
+            <div id="DATE"><h3>DATE</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+DATE gives the current date set on the computer.
+            </p>
+            <div id="ECHO"><h3>ECHO</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+In the input given, the charaters present behind the ECHO command without the space immediately following the command is
+outputted to the standard output stream.
+            </p>
+            <div id="EXIT"><h3>EXIT</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+Exits the program.
+            </p>
+            <div id="HELP"><h3>HELP</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+Ouputs the help menu for Second.
+            </p>
+            <div id="RMDIR"><h3>RMDIR</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+Allows deletion of a directory from a location.<br>
+After RMDIR command is activated, the full path of the directory must be specified.<br>
+Directory will be removed if the directory exits and permissions are available to remove the directory, else process is terminated.
+            </p>
+            <div id="TIME"><h3>TIME</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+Displays time according to the format:<br>
+Time now is: hh : mm : ss microsecond
+            </p>
+            <div id="SECOND"><h3>SECOND</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+Displays copyright and compatibilty information.
+            </p>
+            <div id="CD"><h3>CD</h3></div>
+            <p style="margin-left: 5%; padding-bottom: 3%;">
+Changes the current working directory.<br>
+Full path of the desired directory to be used must be inputted after the CD command is activated.<br>
+If path exists, current working directory is changed.<br>
+Else process is terminated.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
