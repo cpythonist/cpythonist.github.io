@@ -112,7 +112,6 @@ li {
     position: sticky;
     top: 0;
     width: 100%;
-    opacity: 0%;
 }
 
 .navbar {
@@ -123,6 +122,7 @@ li {
     margin: 0 auto auto auto;
     display: inline-block;
     font-size: 14px;
+    opacity: 0%;
 }
 
 .navbar img {
