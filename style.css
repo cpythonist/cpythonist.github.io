@@ -1,0 +1,334 @@
+body {
+    font-weight: 450;
+    color: white;
+    text-align: center;
+    background-color: black;
+    margin-top: 1.5%;
+    font-size: 20px;
+    font-family: 'Segoe UI';
+    src: url("fonts/segoeUI.ttf");
+}
+
+p {
+    line-height: 200%;
+    text-align: justify;
+}
+
+.lineNavbarBottom {
+    width: auto;
+    border-bottom: 2px solid white;
+    padding: 0;
+    margin: 1.5% auto;
+    margin-right: 2%;
+}
+
+footer {
+    padding: 1%;
+    color: rgb(148, 148, 148);
+    font-size: large;
+    margin-top: 1%;
+    position: relative;
+    text-align: center;
+    margin: 1% auto;
+}
+
+.topnav {
+    list-style-type: none;
+    margin: 0 auto;
+    padding: 0;
+    overflow: hidden;
+    text-align: center;
+    align-items: center;
+    font-size: 17px;
+ }
+ 
+ .topnav ul {
+    list-style-type: none;
+    margin: -1% auto -1% auto;
+    display: inline-block;
+ }
+ 
+ .topnav li {
+    float: left;
+ }
+ 
+ .topnav li a, .dropbtn {
+    display: inline-block;
+    color: rgb(148, 148, 148);
+    text-align: center;
+    padding: 15px 20px;
+    text-decoration: none;
+    width: auto;
+    transition-duration: 0.3s;
+ }
+ 
+ .topnav li a:hover, .dropdown:hover .dropbtn {
+    color: white;
+    transition-duration: 0.3s;
+ }
+
+ .topnav img {
+    width: 2.75%;
+    vertical-align: middle;
+    transition-duration: 0.45s;
+ }
+ 
+ .topnav img:hover {
+    filter: grayscale(100%);
+    transition-duration: 0.45s;
+ }
+ 
+ li.dropdown {
+    display: inline-block;
+ }
+ 
+ .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgb(46, 46, 46);
+    min-width: 160px;
+    border-radius: 10px;
+    z-index: 2;
+ }
+ 
+ .topnav .dropdown-content a { 
+    color: rgb(128, 128, 128);
+    padding: 13px 17px;
+    text-decoration: underline;
+    display: block;
+    text-align: center;
+    text-decoration-color: rgb(46, 46, 46);
+ }
+ 
+ .topnav .dropdown-content a:hover {
+    text-decoration-color: rgb(255, 255, 255);
+    transition-duration: 0.3s;
+ }
+
+ .paragraph {
+    margin: 0 15%;
+ }
+ 
+ .dropdown:hover .dropdown-content {
+    display: block;
+ }
+
+.downloadSecond {
+    text-decoration: none;
+    color: rgb(102, 148, 191);
+    border: 1px solid white;
+    border-radius: 50px;
+    width: 20%;
+    margin: auto;
+    padding: 1%;
+    background-color: white;
+    font-weight: bold;
+    transition-duration: 0.5s;
+}
+
+.downloadSecondButton {
+    padding: 1%;
+}
+
+.downloadSecondButton :hover {
+    transition-duration: 0.5s;
+    color: rgb(172, 89, 89);
+    background-color: black;
+}
+
+.githubButton {
+    width: 3.5%;
+    padding: 2% 0 0 0;
+    transition-duration: 0.45s;
+}
+
+.githubButton:hover {
+    filter: invert(1);
+    border-radius: 20px;
+    transition-duration: 0.45s;
+}
+
+.linkWithoutTextDec {
+    text-decoration: underline;
+    text-decoration-color: black;
+    color: rgb(145, 203, 253);
+    transition-duration: 0.3s;
+}
+
+.linkWithoutTextDec:hover {
+    text-decoration-color: rgb(145, 203, 253);
+    transition-duration: 0.3s;
+}
+
+.animationForContactsLinkIndexHTML {
+    text-decoration: none;
+    color: rgb(145, 203, 253);
+    transition-duration: 0.3s;
+}
+
+.animationForContactsLinkIndexHTML:hover {
+    background-color: white;
+    color: black;
+    transition-duration: 0.3s;
+}
+
+.secondHTMLLinks {
+    color:rgb(145, 203, 253);
+    text-decoration: none;
+    transition-duration: 0.3s;
+}
+
+.secondHTMLLinks:hover {
+    color: green;
+    text-decoration: underline;
+    transition-duration: 0.3s;
+}
+
+.secondHTMLTable table {
+    width: 65%;
+    margin: 0 auto;
+    border: 2px solid white;
+}
+
+.secondHTMLTable th, td {
+    margin: 0 auto;
+    border: 2px solid white;
+    padding: 1rem;
+}
+
+.mainContentWidthAdj {
+    margin: 0 20%;
+    text-align: justify;
+}
+
+.verticalPageAccess {
+    width: 300px;
+    height: 100%;
+    background-color: rgb(66, 66, 66);
+    padding: 0;
+    float: left;
+    overflow: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-radius: 0 20px 20px 0;
+    z-index: 10;
+    margin-top: 0;
+}
+
+.pushDown {
+    margin-top: 9%;
+}
+
+.verticalPageAccess a {
+    text-decoration: none;
+    color: rgb(165, 195, 202);
+    display: block;
+    text-align: justify;
+    margin: 0 0 0 6%;
+    padding: 3%;
+    transition-duration: 0.1s;
+}
+
+.verticalPageAccess a:hover {
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    transition-duration: 0.1s;
+}
+
+.sourceCodeElement {
+    font-family: 'Courier New', Courier, monospace;
+    color: wheat;
+}
+
+.sourceCodeElement pre {
+    padding: 1.5%;
+    text-align: left;
+    font-size: 19px;
+    line-height: 150%;
+}
+
+.verticalLine {
+    border-left: 2px solid wheat;
+    height: auto;
+    margin: 0 1% 3% 4%;
+}
+
+.sourceCodeWithMargin {
+    display: flex;
+}
+
+.row {
+    display: flex;
+    width: 85%;
+    margin: 4% auto;
+}
+
+.column {
+    flex: 100%;
+    padding: 0.5%;
+}
+
+.watermark:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("/images/cPythonistLarge.png");
+    background-position: 83%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 20%;
+    pointer-events: none;
+    z-index: -999;
+    opacity: 0.2;
+}
+
+.watermarkSecond:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: url("/images/second3.0/second3.ico");
+    background-position: 83%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 25%;
+    pointer-events: none;
+    z-index: -999;
+    opacity: 0.2;
+}
+
+.footerClass {
+    display: flex;
+}
+
+.footerClass img {
+    width: 5%;
+    vertical-align: middle;
+}
+
+.contactImages {
+    width: 2%;
+    vertical-align: middle;
+}
+
+.docParagraph {
+    margin-left: 5%;
+    padding-bottom: 3%;
+}
+
+@media screen and (max-width: 1700px) {
+    .verticalPageAccess {
+      display: none;
+    }
+
+    body {
+        width: 100%;
+        font-size: xx-large;
+    }
+}

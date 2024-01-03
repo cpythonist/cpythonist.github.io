@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../../style.css">
+        <link rel="icon" href="../../images/cPythonist.png">
+        <title>Home - CPythonist</title>
+    </head>
+    <body class="watermark">
+
+        <div class="topnav">
+            <a href="../../index.html">
+                <img src="../../images/cPythonist.png">
+            </a>
+            <ul>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown"><a href="../../second.html" class="dropButton">Second</a></li>
+                <li class="dropdown">
+                    <a href="../../otherProjects.html" class="dropButton">Other Projects</a>
+                    <div class="dropdown-content">
+                        <a href="../../ticTacToe/ticTacToe.html">Tic-Tac-Toe</a>
+                    </div>
+                </li>
+                <li><a href="../../contact.html">Contact</a></li>
+            </ul>
+        </div>
+
+        <hr style="width:30%; height:2px solid; margin: 1.5% auto auto auto; text-align:center">
+
+        <h2>CPythonist</h2>
+        <h3 style="font-size: larger;">SECOND-1.0 DOCUMENTATION</h3>
+
+        <div class="verticalPageAccess">
+            <h3 style="color: wheat;">Jump to...</h3>
+            <div class="pushDown">
+                <a href="#CD">CD</a>
+                <a href="#COPY">COPY</a>
+                <a href="#DATE">DATE</a>
+                <a href="#ECHO">ECHO</a>
+                <a href="#EXIT">EXIT</a>
+                <a href="#HELP">HELP</a>
+                <a href="#MKDIR">MKDIR</a>
+                <a href="#RMDIR">RMDIR</a>
+                <a href="#SECOND">SECOND</a>
+                <a href="#SHUTDOWN">SHUTDOWN</a>
+                <a href="#TIME">TIME</a>
+            </div>
+        </div>
+
+        <div class="mainContentWidthAdj">
+            <br>
+            <h3 id="CD">CD</h3>
+            <p class="docParagraph">
+Changes the current working directory.<br>
+Full path of the desired directory to be used must be inputted after the <code style="color: wheat;">CD</code> command is activated.<br>
+If path exists, current working directory is changed.<br>
+Else process is terminated.
+            </p>
+            <h3 id="COPY">COPY</h3>
+            <p style="margin-left:5%; padding-bottom: 3%;">
+This command allows the user to copy any file or directory from a location to another.<br>
+Once <code style="color: wheat;">COPY</code> command is activated, input file/directory must be given. The program checks if the input file/directory exists.<br>
+If it exists, then output destination is to be given. If output directory is also exists, then command is carried out, provided 
+<i>permissions are available for read and write</i>, and other factors. If not, process is terminated.
+            </p>
+            <h3 id="DATE">DATE</h3>
+            <p class="docParagraph">
+DATE gives the current date set on the computer.
+            </p>
+            <h3 id="ECHO">ECHO</h3>
+            <p class="docParagraph">
+In the input given, the charaters present behind the <code style="color: wheat;">ECHO</code> command without the space immediately following the command is
+outputted to the standard output stream.
+            </p>
+            <h3 id="EXIT">EXIT</h3>
+            <p class="docParagraph">
+Exits the program.
+            </p>
+            <h3 id="HELP">HELP</h3>
+            <p class="docParagraph">
+Ouputs the help menu for Second.
+            </p>
+            <h3 id="MKDIR">MKDIR</h3>
+            <p class="docParagraph">
+This command allows the user to create a new folder.<br>
+After <code style="color: wheat;">MKDIR</code> command is activated, directory in which new folder has to created must be inputted.<br>
+If the directory exists, name of the new directory must be inputted, which is checked for illegal characters.<br>
+If these <i>two checks are passed</i>, the program creates a new folder, provided <i>permission and other factors are 
+available for read and write processes</i>.
+            </p>
+            <h3 id="RMDIR">RMDIR</h3>
+            <p class="docParagraph">
+Allows deletion of a directory from a location.<br>
+After <code style="color: wheat;">RMDIR</code> command is activated, the full path of the directory must be specified.<br>
+Directory will be removed if the directory exits and permissions are available to remove the directory, else process is terminated.
+            </p>
+            <h3 id="SECOND">SECOND</h3>
+            <p class="docParagraph">
+Displays copyright and compatibilty information.
+            </p>
+            <h3 id="SHUTDOWN">SHUTDOWN</h3>
+            <p class="docParagraph">
+<code style="color: wheat;">SHUTDOWN</code> command allows the user to shutdown the computer (with fast startup enabled).
+            </p>
+            <h3 id="TIME">TIME</h3>
+            <p class="docParagraph">
+Displays time according to the format:<br>
+<code style="color: wheat;">Time now is: hh : mm : ss microsecond</code>
+            </p>
+            
+            <footer>
+                <a href="http://github.com/cpythonist">
+                    <img src="/images/meCpythonist.png" style="width: 2%; vertical-align: middle;">
+                </a>
+                <a href="http://github.com/cpythonist" style="text-decoration: none; color: gray">&nbsp;&nbsp;CPythonist</a>
+            </footer>
+        </div>
+    </body>
+</html>

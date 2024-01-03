@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../../style.css">
+        <link rel="icon" href="../../images/cPythonist.png">
+        <script src="https://gist.github.com/username/a39a422ebdff6e732753b90573100b16.js"></script>
+        <title>Source Code - Second 1.0 - CPythonist</title>
+    </head>
+    <body>
+
+        <div class="topnav">
+            <a href="../../index.html">
+                <img src="../../images/cPythonist.png">
+            </a>
+            <ul>
+                <li><a href="../../index.html">Home</a></li>
+                <li class="dropdown"><a href="../../second.html" class="dropButton">Second</a></li>
+                <li class="dropdown">
+                    <a href="../../otherProjects.html" class="dropButton">Other Projects</a>
+                    <div class="dropdown-content">
+                        <a href="../../ticTacToe/ticTacToe.html">Tic-Tac-Toe</a>
+                    </div>
+                </li>
+                <li><a href="../../contact.html">Contact</a></li>
+            </ul>
+        </div>
+
+        <hr style="width:30%; height:2px solid; margin: 1.5% auto auto auto; text-align:center">
+
+        <h2>CPythonist</h2>
+        <h3>Second 1.0: Source Code</h3>
+        <div class="sourceCodeWithMargin">
+            <div class="verticalLine"></div>
+            <code class="sourceCodeElement">
+                <pre>
+__author__ = "Thiruvalluvan Kamaraj"
+__copyright__ = "Copyright (c) Infinite Inc."
+__credits__ = ["Thiruvalluvan Kamaraj"]
+__license__ = "Infinite License"
+__version__ = "1.0"
+__maintainer__ = "Thiruvalluvan Kamaraj"
+__email__ = "valluvankamaraj@gmail.com"
+__status__ = "Production"
+
+import getpass, os, shutil, datetime, sys, subprocess;
+
+def splitWord(word):
+    return [char for char in word];
+
+print("""Infinite Second
+Made by ... &lt;NameError: Name not found>
+
+First enter the single-word command,
+and then give the required information
+for the command.
+
+Type 'help' for help menu.
+""");
+
+name = getpass.getuser();
+path = "C:\\Users\\" + name;
+
+while True:
+    try:
+        com = input(path + "> ").lower();
+        commands = ('copy', 'mkdir', 'shutdown',
+                    'date', 'echo', 'exit',
+                    'help', 'rmdir', 'time',
+                    'second', 'cd', 'start');
+        given = com.split();
+        if given == []:
+            print("\nEmpty command not accepted.\n");
+        else:
+            for i in given:
+                if i in commands:
+                    comH = i;
+                    break;
+            else:
+                print("\nInvalid command.\n");
+                continue;
+            if comH == commands[0]:
+                try:
+                    source = input("\nEnter source file/directory (full path)> ");
+                    try:
+                        assert source.isspace() != True and source != "";
+                        if os.path.isfile(source):
+                            dest = input("\nEnter destination folder (full path)> ");
+                            try:
+                                assert os.path.isdir(dest) and dest != "" and dest.isspace() != True;
+                                shutil.copy(source, dest);
+                                print("\nFile copied successfully.\n");
+                            except AssertionError:
+                                print("\nDirectory not found.\n");
+                            except PermissionError:
+                                print("\nAccess denied.\n");
+                            except FileExistsError:
+                                print("\nThe file already exists.\n");
+                        elif os.path.isdir(source):
+                            dest = input("\nEnter destination folder (full path)> ");
+                            try:
+                                assert os.path.isdir(dest) and dest != "" and dest.isspace() != True;
+                                if '/' in source:
+                                    names = source.split("/");
+                                elif '//' in source:
+                                    names = source.split("//");
+                                elif '\\' in source:
+                                    names = source.split("\\");
+                                elif '\\\\' in source:
+                                    names = source.split("\\\\");
+                                else:
+                                    print("\nEither illegal seperation character given or\ninvalid seperation \
+    character.\nUse '/', '//', '\' or '\\'.\n");
+                                    continue;
+                                try:
+                                    os.mkdir(str(dest) + "\\" + str(names[-1]));
+                                    dest = str(dest) +  "\\" + str(names[-1]);
+                                    shutil.copytree(source, dest, dirs_exist_ok=True);
+                                    print("\nFolder copied successfully.\n");
+                                except FileExistsError:
+                                    ok = input(f"\nA directory with the name {names[-1]} already exists in \
+    {dest}. Overwrite ([y]es / [n]o)> ").lower();
+                                    if 'y' in ok:
+                                        dest = str(dest) +  "\\" + str(names[-1]);
+                                        shutil.copytree(source, dest, dirs_exist_ok=True);
+                                        print("\nFolder copied successfully.\n");
+                                    else:
+                                        print("\nDirectory not copied.\n");
+                            except AssertionError:
+                                print("\nDirectory not found.\n");
+                            except PermissionError:
+                                print("\nAccess denied.\n");
+                            except FileExistsError:
+                                print("\nThe folder already exists.\n");
+                        else:
+                            print("\nFile or directory not found.\n");
+                    except AssertionError:
+                        print("\nEmpty file path or folder path.\n");
+                except AssertionError:
+                    print("\nFile not found.\n");
+                except PermissionError:
+                    print("\nAccess denied.\n");
+            elif comH == commands[1]:
+                finalDir = input("\nDirectory path (without directory name)> ");
+                if os.path.isdir(finalDir):
+                    dirName = input("\nEnter the directory name> ");
+                    illegal = ['&lt;', '>', ':', '"', '/', '\\', '|', '?', '*'];
+                    explodedName = splitWord(dirName);
+                    for i in explodedName:
+                        if i in illegal:
+                            print("\nIllegal character for directory name.\n");
+                            break;
+                    else:
+                        try:
+                            os.mkdir(str(finalDir) + "\\" + str(dirName), mode=0o666);
+                            assert (os.path.isdir(str(finalDir) + "\\" + str(dirName)));
+                            print("\nDirectory created.\n");
+                        except FileExistsError:
+                            print("\nDirectory already exists.\n");
+                        except AssertionError:
+                            print("\nUnable to create directory.\n");
+                        except PermissionError:
+                            print("\nInsufficient permissions to create directory.\n");
+                else:
+                    print("\nDirectory not found.\n");
+            elif comH == commands[2]:
+                print("\nShutting down...");
+                os.system("shutdown /hybrid /s /t 000");
+            elif comH == commands[3]:
+                dateToday = datetime.date.today().strftime("%d %B %Y, %A");
+                print("\nDate and day today is: " + str(dateToday) + "\n");
+            elif comH == commands[4]:
+                print("\n" + com.removeprefix("echo ") + "\n");
+            elif comH == commands[5]:
+                sys.exit(0);
+            elif comH == commands[6]:
+                print("""
+COPY      Copys file/folder from a source to target folder
+MKDIR     Creates a directory in the target location
+SHUTDOWN  Shuts down the computer
+DATE      Displays the date today
+ECHO      Displays the characters after the command
+EXIT      Exits COM
+HELP      Displays this help page
+RMDIR     Removes a directory from the target location
+TIME      Displays the time now
+SECOND    Displays copyright
+CD        Changes the directory
+""");
+            elif comH == commands[7]:
+                finalDir = input("\nDirectory path> ");
+                try:
+                    assert os.path.isdir(finalDir);
+                    shutil.rmtree(finalDir);
+                    print("\nDirectory removed.\n");
+                except AssertionError:
+                    print("\nDirectory not found.\n");
+                except PermissionError:
+                    print("\nInsufficient permissions available for action.\n");
+            elif comH == commands[8]:
+                timeNow = datetime.datetime.now().strftime("%I : %M : %S  %f");
+                print("\nTime now is: " + str(timeNow) + "\n");
+            elif comH == commands[9]:
+                print("""
+Second by a devotee of Python.
+(c) Thiruvalluvan Kamaraj.
+Made for Windows 10 or later.
+""");
+            elif comH == commands[10]:
+                pathTrail = input("\nEnter entire path> ");
+                if os.path.isdir(pathTrail) == True:
+                    path = pathTrail;
+                    print();
+                else:
+                    print("\nDirectory not found.\n");
+            elif comH == commands[11]:
+                filename = input("\nEnter file/directory that you want to open> ");
+                if os.path.isfile(filename):
+                    os.startfile(filename);
+                    print()
+                elif os.path.isdir(filename):
+                    dirPath = r'explorer "' + filename + '"';
+                    subprocess.Popen(dirPath);
+                    print();
+                else:
+                    print(f"\nNo file or directory found with name '{filename}'.\n");
+    except KeyboardInterrupt:
+            print();
+            print();
+    except EOFError:
+            print();
+            print();
+        
+                </pre>
+            </code>
+        </div>
+
+        <footer>
+            <a href="http://github.com/cpythonist">
+                <img src="/images/meCpythonist.png" style="width: 2%; vertical-align: middle;">
+            </a>
+            <a href="http://github.com/cpythonist" style="text-decoration: none; color: gray">&nbsp;&nbsp;CPythonist</a>
+        </footer>
+    </body>
+</html>

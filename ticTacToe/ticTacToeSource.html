@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../style.css">
+        <link rel="icon" href="../images/cPythonist.png">
+        <script src="https://gist.github.com/username/a39a422ebdff6e732753b90573100b16.js"></script>
+        <title>Second - CPythonist</title>
+    </head>
+    <body>
+
+        <div class="topnav">
+            <a href="../index.html">
+                <img src="../images/cPythonist.png">
+            </a>
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li class="dropdown"><a href="../second.html" class="dropButton">Second</a></li>
+                <li class="dropdown">
+                    <a href="../otherProjects.html" class="dropButton">Other Projects</a>
+                    <div class="dropdown-content">
+                        <a href="../ticTacToe/ticTacToe.html">Tic-Tac-Toe</a>
+                    </div>
+                </li>
+                <li><a href="../contact.html">Contact</a></li>
+            </ul>
+        </div>
+
+        <hr style="width:30%; height:2px solid; margin: 1.5% auto auto auto; text-align:center">
+
+        <h2>CPythonist</h2>
+        <h3>Tic-Tac-Toe Player vs Computer: Source Code</h3>
+        <div class="sourceCodeWithMargin">
+            <div class="verticalLine"></div>
+            <code class="sourceCodeElement">
+                <pre>
+import random
+
+def main():
+
+    def isDraw(board):
+        for i in board:
+            if i == ' ':
+                return False
+        return True
+
+    def printBoard(board):
+        print("""
+    {} | {} | {}
+---+---+---
+    {} | {} | {}
+---+---+---
+    {} | {} | {}
+""".format(board[0],board[1],board[2],
+    board[3],board[4],board[5],
+    board[6],board[7],board[8]))
+    
+    def isWin(player,board):
+        row1 = ((board[0] == player) and (board[1] == player) and (board[2] == player))
+        row2 = ((board[3] == player) and (board[4] == player) and (board[5] == player))
+        row3 = ((board[6] == player) and (board[7] == player) and (board[8] == player))
+        column1 = ((board[0] == player) and (board[3] == player) and (board[6] == player))
+        column2 = ((board[1] == player) and (board[4] == player) and (board[7] == player))
+        column3 = ((board[2] == player) and (board[5] == player) and (board[8] == player))
+        diaLeft = ((board[0] == player) and (board[4] == player) and (board[8] == player))
+        diaRight = ((board[2] == player) and (board[4] == player) and (board[6] == player))
+        return (row1 or row2 or row3 or column1 or column2 or column3 or diaLeft or diaRight)
+
+    def playTurn(playMark,board):
+        accept = False
+        while not accept:
+            pos = input("Enter position to place {}: ".format(playMark))
+            if pos.isnumeric():
+                if len(pos) == 1:
+                    pos = int(pos)
+                    if pos in range(1,10):
+                        valid = ((7,8,9,4,5,6,1,2,3),(0,1,2,3,4,5,6,7,8))
+                        pos = valid[1][valid[0].index(pos)]
+                        if board[pos] == ' ':
+                            accept = True
+                            return pos
+                        else:
+                            print("The position is already filled!\n")
+                    else:
+                        print("Invalid position!\n")
+                else:
+                    print("Enter only one digit value!\n")
+            else:
+                print("Enter only numerical value!\n")
+
+
+    def comTurn(playMark,comMark,board):
+
+        for i in range(8):
+            copy = board[:]
+            if copy[i] == ' ':
+                copy[i] = comMark
+                if isWin(comMark,copy):
+                    return i
+
+        for i in range(8):
+            copy = board[:]
+            if copy[i] == ' ':
+                copy[i] = playMark
+                if isWin(playMark,copy):
+                    return i
+        
+        corners = (0,2,6,8)
+        edges = (1,3,5,7)
+        possibleCorners = [i for i in range(len(corners)) if board[i] == ' ']
+        possibleEdges = [i for i in range(len(edges)) if board[i] == ' ']
+        
+        if len(possibleCorners) != 0:
+            return random.choice(possibleCorners)
+        
+        if board[4] == ' ':
+            return 4
+        
+        if len(possibleEdges) != 0:
+            return random.choice(possibleEdges)
+    
+    
+    print("""
+The arrangement is as follows:
+
+    7 | 8 | 9
+---+---+---
+    4 | 5 | 6
+---+---+---
+    1 | 2 | 3
+
+Tip: If a number pad is present, use it!
+""")
+    choice = False
+    while not choice:
+        first = input("Do you want to go first (y/n)?: ").lower()
+        if first in ('y',"yes",''):
+            playMark = 'X'
+            comMark = 'O'
+            turn = 'p'
+            choice = True
+        elif first in ('n',"no"):
+            playMark = 'O'
+            comMark = 'X'
+            turn = 'c'
+            choice = True
+
+    while True:
+        board = [' '] * 9
+        game = True
+        while game:
+            printBoard(board)
+            if turn == 'p':
+                pos = playTurn(playMark,board)
+                board[pos] = playMark
+                if isWin(playMark,board):
+                    printBoard(board)
+                    print("You WIN!")
+                    game = False
+                else:
+                    if isDraw(board):
+                        printBoard(board)
+                        print("It's a DRAW!")
+                        game = False
+                    else:
+                        turn = 'c'
+
+            else:
+                pos = comTurn(playMark,comMark,board)
+                board[pos] = comMark
+                if isWin(comMark,board):
+                    printBoard(board)
+                    print("The computer wins!")
+                    game = False
+                else:
+                    if isDraw(board):
+                        printBoard(board)
+                        print("It's a DRAW!")
+                        game = False
+                    else:
+                        turn = 'p'
+
+        continuing = input("Want to play again (y/n)?: ")
+        if continuing in ('n',"no"):
+            break
+
+
+main()
+                </pre>
+            </code>
+        </div>
+
+        <footer>
+            <a href="http://github.com/cpythonist">
+                <img src="/images/meCpythonist.png" style="width: 2%; vertical-align: middle;">
+            </a>
+            <a href="http://github.com/cpythonist" style="text-decoration: none; color: gray">&nbsp;&nbsp;CPythonist</a>
+        </footer>
+    </body>
+</html>
