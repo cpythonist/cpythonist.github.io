@@ -1,1 +1,1288 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../../style.css">
+        <link rel="icon" href="../../images/cPythonist.png">
+        <script src="https://gist.github.com/username/a39a422ebdff6e732753b90573100b16.js"></script>
+        <title>Source Code - Second 3.0 - CPythonist</title>
+    </head>
+    <body>
 
+        <div class="topnav">
+            <a href="http://cpythonist.github.io">
+                <img src="../../images/cPythonist.png">
+            </a>
+            <ul>
+                <li><a href="http://cpythonist.github.io">Home</a></li>
+                <li class="dropdown"><a href="../../second.html" class="dropButton">Second</a></li>
+                <li class="dropdown">
+                    <a href="../../otherProjects.html" class="dropButton">Other Projects</a>
+                    <div class="dropdown-content">
+                        <a href="../../ticTacToe/ticTacToe.html">Tic-Tac-Toe</a>
+                    </div>
+                </li>
+                <li><a href="../../contact.html">Contact</a></li>
+            </ul>
+        </div>
+
+        <hr style="width:30%; height:2px solid; margin: 1.5% auto auto auto; text-align:center">
+
+        <h2>CPythonist</h2>
+        <h3>Second 3.0: Source Code</h3>
+        <div class="sourceCodeWithMargin">
+            <div class="verticalLine"></div>
+            <code class="sourceCodeElement">
+                <pre>
+<h1>base.pyx</h1>
+# Second 4.0 source code
+# 
+# Filename: base.py
+# 
+# This software is a product of Infinite, Inc., and was written by
+# CPythonist (http://cpythonist.github.io/) of the development team of Infinite, Inc.
+# 
+# 
+# Copyright 2024 Infinite Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+# 
+# Please report any bugs at using the email address in https://cpythonist.github.io/contact.html.
+# 
+
+# Version declaration
+__version__ = "4.0" # Defined as <class 'str'> so as to be compatible for parse function of packaging.version module.
+                    # It accepts only string, not integers and floats.
+
+# Imports
+from cmd import Cmd
+from datetime import datetime as dt
+from os import chdir, getcwd, getlogin, getpid, listdir, makedirs, mkdir, remove as removeFile, sep as osSeparator, scandir, startfile, system, walk
+from os.path import basename, expanduser, getctime, getmtime, getsize, isdir, isfile, join, relpath
+from pathlib import Path
+from re import search
+from shutil import copy2, copytree, rmtree, which as shutilWhich
+from subprocess import run
+from sys import exit as sysExit
+import ctypes
+import globalNamespace as gn
+import printStrings
+
+system('')
+
+# Main class of the program
+class Second4(Cmd):
+    def __init__(self):
+        super().__init__()
+        self.path = expanduser('~')
+        self.realPrompt = gn.PROMPT
+    
+    def default(self, line): # Overwrite default method for parsing terminal and invalid commands
+        line = [i for i in line.split() if not (i == '' or i.isspace())]
+        gn.customPrint(f"&&SECOND4:## ??Error:## Unknown command: ??{line[0]}## -> {' '.join(line)}\n")
+    
+    def emptyline(self): # Overwrite default method for emptyline
+        pass
+
+    def onecmd(self, line): # Used to make the program access the command when input in any case
+        """
+        Used from cmd.py module of standard library of CPython 3.11.6.
+        Used for adding functionality of uppercase and mixed case commands.
+        """
+        cmd, arg, line = self.parseline(line)
+        if not line:
+            return self.emptyline()
+        if cmd is None:
+            return self.default(line)
+        self.lastcmd = line
+        if line == 'EOF' :
+            self.lastcmd = ''
+        if cmd == '':
+            return self.default(line)
+        else:
+            try:
+                func = getattr(self, 'do_' + cmd.lower()) # Edited here. Added .lower() to variable cmd.
+            except AttributeError:
+                return self.default(line)
+            return func(arg)
+
+    def preloop(self): # Dynamic prompt to be updated once at the start of the program
+        self.prompt = gn.promptUpdater(self.path, self.realPrompt)
+
+    def postcmd(self, stop: bool, line: str) -> bool: # Dynamic prompt updated at the end of each loop
+        self.prompt = gn.promptUpdater(self.path, self.realPrompt)
+        return super().postcmd(stop, line)
+    
+    def do_cd(self, args): # Change directory method
+        """
+        Changes the current working directory.
+        Syntax:
+            CD path
+            
+            ^^path##    Directory to change into.
+        """
+        if (temp:=search('"(.*?)"', args)) or search("'(.*?)'", args): # Detecting quotation marks
+            args = [i for i in (args.split('"') if temp else args.split("'")) if not (i == '' or i.isspace())][0]
+
+            if (temp:=isdir(self.path + '\\' + args)) or isdir(args):
+                self.path = (str(Path(self.path + '\\' + args).resolve()) if temp else str(Path(args).resolve()))
+                gn.customPrint("&&CD:## !!Success:## Current working directory changed.\n")
+            else:
+                gn.customPrint("&&CD:## ??Error##: Directory not found.\n")
+        
+        else: # If quotation marks are not used, use space as delimiters
+            args = [i for i in args.split() if not (i == '' or i.isspace())]
+
+            if len(args) == 1:
+                args = args[0]
+                if (temp1:=isdir(self.path + '\\' + args)) or isdir(args):
+                    self.path = (str(Path(self.path + '\\' + args).resolve()) if temp1 else str(Path(args).resolve()))
+                    gn.customPrint("&&CD:## !!Success:## Current working directory changed.\n")
+                else:
+                    gn.customPrint(f"&&CD:## ??Error##: Directory \"{args}\" not found.\n")
+            else:
+                gn.customPrint("&&CD:## ??Error:## Too many parameters given.\n")
+
+    def do_cls(self, args): # Clear screen method
+        """
+        Clears the output screen.
+        Syntax:
+            CLS
+        """
+        system("cls")
+        print()
+    
+    def do_command(self, args):
+        """
+        Runs terminal commands on Second.
+        Originally, this feature was written in default method of this class, so that commands that 
+        are not present in Second 4 could be executed as terminal commands. But this was later removed 
+        to prevent accidental execution of terminal commands, and thus a new command was created in 
+        Second 4 to accomodate the feature.
+        Syntax:
+            COMMAND command
+            ^^command## -> Command to execute in terminal.
+        """
+        gn.customPrint("&&COMMAND:## **Terminal output:##")
+        pathTemp = getcwd()
+        chdir(self.path)
+        system(args)
+        chdir(pathTemp)
+        gn.customPrint()
+        
+
+    def do_copy(self, args): # File or directory copy method
+        """
+        Copies a file/directory to another directory.
+        Syntax:
+            COPY source dest
+
+            source -> Path of source file/directory on the computer.
+            dest -> Destination directory for copying source into.
+        """
+        if (temp:=search('"(.*?)\\s+"(.*?)"', args)) or search("'(.*?)'\\s+'(.*?)'", args): # Check for use of quotation marks
+            args = [i for i in (args.split('"') if temp else args.split("'")) if not (i == '' or i.isspace())]
+            src, dest = args
+        else: # If no quotation marks, use space as delimiters
+            args = args.split()
+            if len(args) == 2: # No argument support yet
+                src, dest = args
+            else:
+                gn.customPrint(f"&&COPY:## ??Error##: Format of the command is incorrect. For help, please type **HELP COPY##.\n")
+                return None # Get out of loop ASAP!
+        
+        if (temp1:=isfile(self.path + '\\' + src)) or isfile(src): # Is source a file?
+            src = str(Path(self.path + '\\' + src).resolve()) if temp1 else str(Path(src).resolve())
+
+            try:
+                if (temp2:=isdir(self.path + '\\' + dest)) or isdir(dest): # Check destination existance
+                    dest = str(Path(self.path + '\\' + dest).resolve()) if temp2 else str(Path(dest).resolve())
+
+                    if isfile(dest + '\\' + basename(src)): # If file already exists
+                        gn.customPrint(f"&&COPY:## **Info:## File \"{src}\" already exists. Do you want to overwrite it [y/n] (default y)? -> ", end='')
+                        overwrite = input().lower() # Overwrite permission
+
+                        if overwrite in ('', 'y', 'yes'):
+                            copy2(src, dest)
+                            gn.customPrint(f"&&COPY:## !!Success##: File \"{src}\" overwrite was successful.\n")
+                        elif overwrite in ('n', 'no'):
+                            gn.customPrint(f"&&COPY:## ?!Info:## File \"{src}\" was NOT copied.\n")
+                    else: # File DOES NOT exist
+                        copy2(src, dest)
+                        gn.customPrint(f"&&COPY:## !!Success##: File \"{src}\" copied successfully.\n")
+                else: # Oops, destination does not exist
+                    gn.customPrint(f"&&COPY:## ??Error##: Destination directory \"{str(Path(dest).resolve())}\" not found.\n")
+            except PermissionError: # No permission to write
+                gn.customPrint(f"&&COPY:## ??Error##: Access is denied.\n")
+            except EOFError: # Process stopped in middle (like during overwrite input)
+                gn.customPrint(f"&&COPY:## ??EOF:## Operation terminated.\n")
+            except Exception as e: # Any other unknown exceptions so that program does not crash
+                gn.customPrint("&&COPY:## ??UnknownError##: " + str(e.__class__.__name__) + str(e))
+        
+        elif (temp3:=isdir(self.path + '\\' + src)) or isdir(src): # Or is source a directory?
+            src = str(Path(self.path + '\\' + src).resolve()) if temp3 else str(Path(src).resolve())
+            
+            try:
+                if (temp4:=(isdir(self.path + '\\' + dest)) or isdir(dest)): # Check directory existance
+                    dest = str(Path(self.path + '\\' + dest).resolve()) if temp4 else str(Path(dest).resolve())
+                    gn.customPrint(f"""&&COPY:## **Info##: Destination directory "{str(Path(dest).resolve())}" exists.
+&&COPY:## **Input:## Do you want to copy into "{dest}" (some files can be overwritten) [y/n] (default y)? -> """, end='')
+                    overwrite = input().lower() # Overwrite permission
+
+                    if overwrite in ('', 'y', 'yes'):
+                        copytree(src, dest, symlinks=True, dirs_exist_ok=True)
+                        gn.customPrint(f"&&COPY:## !!Success##: Directory copy was successful.\n")
+                    elif overwrite in ('n', 'no'):
+                        gn.customPrint(f"&&COPY:## ?!Info##: Directory copy was NOT performed.\n")
+                    else:
+                        gn.customPrint(f"&&COPY:## ??Info##: Invalid option. Directory copy was NOT performed.\n")
+                else:
+                    try:
+                        pathTemp = getcwd()
+                        chdir(self.path)
+                        makedirs(dest)
+                        copytree(src, dest, symlinks=True, dirs_exist_ok=True)
+                        gn.customPrint(f"&&COPY:## !!Success##: Directory \"{str(Path(dest).resolve())}\" was created and copy from \"{src}\" was successful.\n")
+                    except Exception as e:
+                        gn.customPrint(f"&&COPY:## ??UnknownError:## {e.__class__.__name__}: {e}\n")
+                    finally:
+                        chdir(pathTemp)
+            except PermissionError:
+                gn.customPrint(f"&&COPY:## ??Error##: Access is denied for source directory.\n")
+            except EOFError:
+                gn.customPrint(f"&&COPY:## ??EOF:## Operation terminated.\n")
+            except Exception as e:
+                gn.customPrint(f"&&COPY:## ??UnknownError##: {e.__class__.__name__}: {e}\n")
+        
+        else:
+            gn.customPrint(f"&&COPY:## ??Error##: Source file not found.\n")
+    
+    def do_copyright(self, args):
+        """
+        Displays the copyright information on Second.
+        Syntax:
+            COPYRIGHT
+        """
+        gn.customPrint(printStrings.Base.copyright)
+    
+    def do_credits(self, args):
+        """
+        Displays the copyright information on Second.
+        Syntax:
+            COPYRIGHT
+        """
+        gn.customPrint(printStrings.Base.credits)
+    
+    def do_date(self, args):
+        """
+        Displays the current system date.
+        Syntax:
+            DATE
+        """
+        gn.customPrint(f"&&DATE:## **Info:## Date today: {dt.today().strftime('%d.%m.%Y (%d %B %Y)')} (dd.mm.yyyy).\n")
+    
+    def do_del(self, args):
+        """
+        Deletes a file/directory.
+        Syntax:
+            DEL path
+            path -> Path of file/directory to be deleted.
+        """
+        if (temp:=search('"(.*?)"', args)) or search("'(.*?)'", args): # Manipulate the arguments given to interpret
+            args = [i for i in (args.split('"') if temp else args.split("'")) if not (i == '' or i.isspace())][0]
+        else:
+            if len(temp:=[i for i in args.split() if not (i == '' or i.isspace())]) == 1: # One argument present
+                args = temp[0]
+            else: # Oops! Many arguments present
+                gn.customPrint(f"&&DEL:## ??Error##: Format of the command is incorrect. For help, please type **HELP START##.\n")
+                return None # Get out of loop ASAP!
+
+        try:
+            pathTemp = getcwd() # I'm tired of writing comments for this particular thingy. It is present like four/five times.
+                                # Kindly check the others, I have written the comments for one of them.
+            chdir(self.path)
+            if (temp:=isfile(args)) or isdir(args): # Check if file or directory, and store that data in temp
+                if temp:
+                    removeFile(args)
+                    gn.customPrint(f"&&DEL:## !!Success:## File \"{Path(args).resolve()}\" was successfully deleted.\n")
+                else:
+                    rmtree(args)
+                    gn.customPrint(f"&&DEL:## !!Success:## Directory \"{Path(args).resolve()}\" was successfully deleted.\n")
+            else: # File/Directory not found
+                gn.customPrint(f"&&DEL:## ??Error:## No file/directory named \"{args}\".\n")
+        except PermissionError:
+            gn.customPrint(f"&&DEL:## ??Error:## Atleast one file/directory in the tree is read-only or permissions unavailable for the operation.\n")
+        except Exception as e: # Unknown Exception occured
+            gn.customPrint(f"&&DEL:## ??UnknownError:## {e.__class__.__name__}: {e}\n")
+        finally:
+            chdir(pathTemp) # Change to recorded directory
+    
+    def do_dir(self, args):
+        """
+        Displays the files and directories one level inside a directory.
+        Syntax:
+            DIR path
+            path -> Directory which needs to be examined.
+        """
+        try:
+            if isdir(args): path = args
+            elif isdir(self.path + "\\" + args): path = self.path + "\\" + args
+            else: gn.customPrint(f"&&DIR:## ??Error:## No directory named \"{args}\".\n"); return None
+            gn.customPrint(f"&&DIR:## **Info:## Command DIR on directory \"{Path(path).resolve()}\".\n")
+            maxSize = 0
+            for j in scandir(path):
+                if len(str(j.stat().st_size)) > maxSize: maxSize = len(str(j.stat().st_size))
+            gn.customPrint(f"{'DATE CREATED':<19}   {'DATE MODIFIED':<19}   TYPE   " + "{size:<{maximumSize}}   NAME".format(size="SIZE", maximumSize=maxSize))
+            for i in scandir(path):
+                print(f"{dt.fromtimestamp(getctime(join(path, i.name))).strftime(r'%d-%m-%Y %H:%M:%S')}   {dt.fromtimestamp(getmtime(join(path, i.name))).strftime(r'%d-%m-%Y %H:%M:%S')}   {'FILE' if isfile(join(path, i.name)) else 'DIR '}   " + "{size:<{maximumSize}}   {name}".format(size=getsize(join(path, i.name)), maximumSize=maxSize, name=i.name))
+            gn.customPrint()
+        except PermissionError:
+            gn.customPrint("&&DIR:## ??Error:## Permissions unavailable for accessing the path given.\n")
+    
+    def do_eof(self, args):
+        """
+        Exits the program.
+        Syntax:
+            ^Z (CTRL+Z)
+        """
+        gn.customPrint(f"&&SECOND4:## !!Success:## Program second4.exe (PID:{getpid()}) exited successfully.\n{'-'*(65+len(str(getpid())))}\n")
+        sysExit(0)
+    
+    def do_exit(self, args):
+        """
+        Exits the program.
+        Syntax:
+            EXIT
+        """
+        gn.customPrint(f"&&SECOND4:## !!Success:## Program second4.exe (PID:{getpid()}) exited successfully.\n{'-'*(65+len(str(getpid())))}\n")
+        sysExit(0)
+
+    def do_greet(self, args):
+        """
+        Greets the user.
+        Syntax:
+            GREET [option]
+            option -> Specify option to greet the user.
+                1 - Greet option 1 (default)
+                2 - Greet option 2
+        """
+        if (args in ('', '1')) or args.isspace(): # Default and mode 1
+            greetStr = f"Hello,"
+        elif args == '2': # Mode 2
+            time = int(dt.now().strftime("%H"))
+            if time in range(12):
+                greetStr = f"Good morning,"
+            elif time in range(12, 4):
+                greetStr = f"Good afternoon,"
+            elif time in range(4,24):
+                greetStr = f"Good evening,"
+        else: # That's mode 3, or INVALID!
+            greetStr = "??That's invalid syntax,##"
+        gn.customPrint(str(greetStr) + f" **{getlogin()}!##\n")
+    
+    def do_help(self, args):
+        """
+        Displays help menu.
+        Syntax:
+            HELP [command]
+            command -> Displays help for command with the name "command".
+        """
+        if len(args:=[i for i in args.split() if not (i == '' or i.isspace())]) == 0: # No argument(s) specified, just print the thing
+            gn.customPrint(printStrings.Base.help, end='')
+        elif len(args) == 1: # Argument specified?
+            try:
+                temp = getattr(printStrings.Base, "help"+args[0].lower().capitalize()) # Try to get the value of the variable
+                gn.customPrint(f"&&HELP:## **{args[0].upper()}:##\n{temp}")
+            except AttributeError: # If not found (the variable)
+                gn.customPrint(f"&&HELP:## ??Error:## No command named \"{args[0]}\".\n")
+        else: # Oops! Too many arguments go against the rules!
+            gn.customPrint(f"&&HELP:## ??Error:## Too many arguments: {str(args)[1:-1]}.\n")
+    
+    def do_mkdir(self, args):
+        """
+        Creates a new directory.
+        Syntax:
+            MKDIR newdir
+            newdir -> Directory name for the new directory (relative or full path, or just directory name)
+        """
+        pathTemp = getcwd() # Record current working directory (expected to be installation folder unless 
+                            # some bug/external interference had caused it to be something else)
+        chdir(self.path) # Change to the self.path directory (as os.mkdir() works with absolute and relative paths)
+        try:
+            mkdir(args) # Try to make new directory
+            gn.customPrint(f"&&MKDIR:## !!Success:## Directory \"{Path(args).resolve()}\" successfully created.\n")
+        except FileExistsError: # Directory exists
+            gn.customPrint(f"&&MKDIR:## ??Error:## Directory \"{Path(args).resolve()}\" already exists.\n")
+        except OSError: # Illegal character in directory name
+            gn.customPrint(f"&&MKDIR:## ??Error:## Invalid character in directory name \"{args}\".\n")
+        except Exception as e: # Unknown Exception occured
+            gn.customPrint(f"&&MKDIR:## ??UnknownError:## {e.__class__.__name__}: {e}\n")
+        finally: # Always execute
+            chdir(pathTemp) # Change to the recorded directory
+    
+    def do_prompt(self, args):
+        """
+        Changes the prompt variable of the program.
+        Syntax:
+            PROMPT prompt
+            prompt -> New prompt for Second
+                %U - Username
+                %S - OS name
+                %R - Release number
+                %P - Path (current working directory)
+                %% - Percentage sign
+        Known bugs:
+            1. When the new prompt is given as one of the formatting symbols of the property of the font of the prompt 
+               changes to the corresponding escape code (e.g., "!!" gives the prompt in green colour). The colour becomes 
+               nomal after the program is restarted. Tried to resolve the issue but was unsuccessful.
+        """
+        self.realPrompt = args # self.realprompt is used for storing the unformatted prompt for 
+                               # being dynamic (like current working directories)
+
+        if args == '': # If no arguments, restore original prompt of the program
+            self.realPrompt = f"{gn.BLUE}%U{gn.RESET}->{gn.BLUE}%S%R{gn.RESET}&&{gn.GREEN}%P{gn.RESET}(S4):~ {gn.YELLOW}${gn.RESET}"
+            gn.customPrint(f"&&PROMPT:## !!Success:## Original prompt variable restored.")
+            
+        try:
+            f = open("settings.dat", 'rb+') # Open to load the data
+            data = gn.loadBin(f) # Load the data
+            f.close()
+            f = open("settings.dat", 'wb') # Overwrite the file
+            data["prompt"] = self.realPrompt # Update the data
+            gn.dumpBin(data, f) # Dump the data
+            f.close() # Close the file.
+            gn.customPrint(f"&&PROMPT:## !!Success:## Prompt variable successfully changed and stored as \"{self.realPrompt}\".\n")
+        
+        except FileNotFoundError: # Settings.dat not found!
+            gn.customPrint("&&PROMPT:## ??Error:## File settings.dat was not found.\n")
+            gn.customPrint("&&PROMPT:## **Info:## Prompt variable will be temporarily changed. To resolve this issue, please restart the program.\n")
+        
+        except (gn.UnpicklingError, KeyError): # Invalid data in settings.dat
+            gn.customPrint("&&PROMPT:## ??Error:## Empty/Invalid data in file settings.dat.")
+            gn.customPrint("&&PROMPT:## ??Info:## Prompt variable will be temporarily changed. To resolve this issue, please restart the program.\n")
+        
+        except Exception as e: # Unknown Exception occured
+            gn.customPrint(f"&&PROMPT:## ??UnknownError:## {e.__class__.__name__}: {e}\n")
+
+    def do_quit(self, args):
+        """
+        Quits the program.
+        Syntax:
+            QUIT
+        """
+        gn.customPrint(f"&&SECOND4:## !!Success:## Program second4.exe (PID:{getpid()}) exited successfully.\n{'-'*(65+len(str(getpid())))}\n")
+        sysExit(0)
+    
+    def do_second(self, args):
+        """
+        Displays the developer and operating system information of Second 4.
+        Syntax:
+            SECOND [-c]
+            -c -> Copies the command output to clipboard
+        """
+        args = [i for i in args.split() if not (i == '' or i.isspace())] # Manipulate args to interpret
+        if not len(args): # Arguments not given
+            gn.customPrint(printStrings.Base.secondFormatted)
+        elif len(args) == 1: # If number of arguments is one and argument is 'c'
+            if args[0] == '-c':
+                gn.customPrint(printStrings.Base.secondFormatted)
+                run(["clip.exe"], input=printStrings.Base.secondUnformatted.encode('utf-8'), check=True)
+                gn.customPrint("&&SECOND:## !!Success:## Successfully copied output to clipboard.\n")
+            elif (args[0].replace('.', '', 1).isnumeric()) and (float(args[0]) == int(__version__.split('.')[0]) + 1):
+                gn.customPrint("&&SECOND5:## !!Don't know if I am released yet.## Check at http://cpythonist.github.io/second.html or http://github.com/cpythonist!\n")
+            else: # Else print error message
+                gn.customPrint(f"&&SECOND:## ??Error:## Unknown argument(s): {str(args)[1:-1]}.\n")
+        elif len(args) > 1: # Too many arguments given
+            gn.customPrint(f"&&SECOND:## ??Error:## Too many argument(s): {str(args)[1:-1]}.\n")
+          
+    
+    def do_shutdown(self, args):
+        """
+        Shuts down the computer.
+        Syntax:
+            SHUTDOWN [options]
+            options -> Customise options for shutdown.
+                -s - Option for shutdown.
+                -r - Option for restart.
+                -t - Sets countdown for SHUTDOWN operation.
+                -h - Enables hybrid mode while startup.
+        If only '-h' and/or '-t' options are used, then by default '-s' argument will be executed.
+        """
+        args = [i for i in args.split() if not (i == '' or i.isspace())]
+        command = ''
+        for i in args:
+            if i == '-s':
+                command += " /s"
+            elif i == '-r':
+                command += " /r"
+            elif i.startswith('-t') and i[1:].isnumeric():
+                command += f" /t {int(i[1:]):03d}"
+            elif i == '-h':
+                command += " /hybrid"
+            else:
+                gn.customPrint(f"&&SHUTDOWN:## ??Error:## Unknown argument: {i}\n")
+        
+        if ('-s' not in command) and ('-r' not in command):
+            command += " /s"
+        
+        try:
+            gn.customPrint("&&SHUTDOWN:## !!Success:## Shutdown command activated.\n")
+            system("shutdown" + command)
+        except Exception as e:
+            gn.customPrint(f"&&SHUTDOWN:## ??UnknownError:## {e.__class__.__name__}: {e}\n")
+    
+    def do_start(self, args):
+        """
+        Starts a file, directory or executable.
+        Syntax:
+            START name [-admin]
+            name   -> Relative/Full path of file/directory, or name of program present in the PATH variable.
+            -admin -> Run as Administrator.
+        """
+        isAdminMode = False
+        if (temp:=search('"(.*?)"(.*?)', args)) or search("'(.*?)'(.*?)", args):
+            args = (temp1:=[i.strip() for i in (args.split('"') if temp else args.split("'")) if not (i == '' or i.isspace())])[0]
+            optArgs = temp1[1:]
+            if len(optArgs) == 0: pass
+            elif len(optArgs) == 1:
+                if optArgs[0] == "-admin":
+                    isAdminMode = True
+                else:
+                    gn.customPrint(f"&&START:## ??Error:## Invalid argument: '{optArgs[0]}'.\n")
+                    return None
+            else:
+                gn.customPrint(f"&&START:## ??Error##: Too many arguments {', '.join(i for i in optArgs)}.\n")
+                return None
+        else:
+            if len(temp:=[i.strip() for i in args.split() if not (i == '' or i.isspace())]):
+                args = temp[0]
+                optArgs = temp[1:]
+                if len(optArgs) == 0: pass
+                elif len(optArgs) == 1:
+                    if optArgs[0] == "-admin":
+                        isAdminMode = True
+                    else:
+                        gn.customPrint(f"&&START:## ??Error:## Invalid argument: '{optArgs[0]}'.\n")
+                        return None
+                else:
+                    gn.customPrint(f"&&START:## ??Error##: Too many arguments: {temp}.\n")
+                    return None
+            else:
+                gn.customPrint(f"&&START:## ??Error##: Format of the command is incorrect. For help, please type **HELP START##.\n")
+                return None # Get out of loop ASAP!
+        
+        try:
+            pathTemp = getcwd() # There is exactly the same block of code in do_mkdir, I guess. Please see that documentation.
+            chdir(self.path)
+            if isfile(args) or isdir(args):
+                startfile(args, 'runas') if isAdminMode else startfile(args)
+                gn.customPrint(f"&&START:## !!Success:## File/Directory \"{Path(args).resolve()}\" opened successfully.\n")
+            else:
+                startfile(args, 'runas') if isAdminMode else startfile(args)
+                gn.customPrint(f"&&START:## !!Success:## Executable \"{shutilWhich(args)}\" opened successfully {'with administrator previlages' if isAdminMode else ''}.\n")
+        
+        except FileNotFoundError as e:
+            gn.customPrint(f"&&START:## ??Error:## \"{args}\" is not a file, directory or executable, or the file is not accessible as requested.\n")
+        
+        except OSError as e:
+            gn.customPrint("&&START:## ??Error:## The process was aborted by the user, or the file is not accessible by the Administrator account.\n")
+        
+        except Exception as e:
+            gn.customPrint(f"&&START:## ??UnknownError:## {e.__class__.__name__}: {e}\n")
+        
+        finally:
+            chdir(pathTemp)
+    
+    def do_time(self, args):
+        """
+        Displays the current system time.
+        Syntax:
+            TIME
+        """
+        gn.customPrint(f"&&TIME:## **Info:## Time now is: {dt.now().strftime('%H:%M.%S [%f] (%d %B %Y)')} (hh:mm.ss [microseconds]).\n")
+    
+    def do_title(self, args):
+        """
+        Changes the title of the console window.
+        Syntax:
+            TITLE title
+            title -> New title for the Second window.
+        """
+        try:
+            ctypes.windll.kernel32.SetConsoleTitleW(args) # Try to change the title
+            gn.customPrint(f"&&TITLE:## !!Success:## Title successfully changed to \"{args}\".\n")
+        except Exception as e: # If any error (I've never see any), then print it.
+            gn.customPrint(f"&&TITLE:## ??UnknownError:## {e.__class__.__name__}: {e}\n")
+    
+    def do_tree(self, args):
+        """
+        Displays a tree of all files and subdirectories inside a directory.
+        Syntax:
+            TREE dir
+            dir -> Directory which needs to be examined.
+        """
+        if (isdir(args)): treePath = args
+        elif (isdir(self.path + "\\" + args)): treePath = self.path + "\\" + args
+        else: gn.customPrint(f"&&TREE:## ??Error:## Path \"{args}\" not found.\n"); return None
+        inDirChars = "⁞﹍﹍﹍"
+        count = 0
+        gn.customPrint(f"&&TREE: **Info:## Command TREE run on directory \"{Path(treePath).resolve()}\".\n")
+        gn.customPrint(str(Path(treePath).resolve()))
+        for root, dirs, files in walk(treePath):
+            if count == 0: count += 1
+            else:
+                print((len(relpath(root, treePath).split(osSeparator))-1)*'    ' + inDirChars + basename(root))
+            for file in files:
+                print((len(relpath(root, treePath).split(osSeparator)))*'    ' + inDirChars + file)
+        gn.customPrint()
+
+<h1>globalNamespace.pyx</h1>
+# Second 4.0 source code
+# 
+# Filename: globalNamespace.py
+# 
+# This software is a product of Infinite, Inc., and was written by
+# CPythonist (cpythonist.github.io) of the development team of Infinite, Inc.
+# 
+# 
+# Copyright 2024 Infinite Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+# 
+# Please refer https://cpythonist.github.io/second/documentation/secondDoc4.0.html
+# for documentation.
+# Please report any bugs using the email address in https://cpythonist.github.io/contact.html.
+# 
+
+# Imports
+from getpass import getuser
+from pickle import UnpicklingError, load as loadBin, dump as dumpBin
+from platform import system as platSys, release as platRel, version as platVer
+from re import sub as substitute
+from sys import stdout
+
+# Declaration of escape codes for text-formatting
+BOLD = "\033[1m"
+BLINK = "\033[5m"
+BLUE = "\033[94m"
+CLS = "\033[H\033[J"
+CYAN = "\033[96m"
+GREEN = "\033[92m"
+HEADER = "\033[95m"
+RED = "\033[91m"
+RESET = "\033[0m"
+UNDERLINE = "\033[4m"
+YELLOW = "\033[93m"
+
+
+def customPrint(*string, end='\n', sep=' ') -> None:
+    """
+    Function: customPrint
+    Custom function for output to sys.stdout with easy text-formatting.
+    Uses regular expressions to evaluate strings given and replace characters
+    as necessary with formatting data.
+
+    Formatting options:
+        ?? -> Red
+        ?! -> Yellow
+        !! -> Green
+        ** -> Cyan
+        ^^ -> Blue
+        && -> Bold
+        __ -> Underline
+        ## -> Reset
+
+    Returns None.
+    """
+    finalStr = []
+    replace = (
+        ("\\?\\?", RED),
+        ("\\?!", YELLOW),
+        ("!!", GREEN),
+        ("\\*\\*", CYAN),
+        ("\\^\\^", BLUE),
+        ("\\&\\&", BOLD),
+        ("__", UNDERLINE),
+        ("\\#\\#", RESET)
+    )
+
+    for i in string:
+        for pattern, repl in replace:        
+            i = substitute(pattern, repl, i)
+        finalStr.append(i)
+    
+    stdout.write(sep.join(finalStr) + end) # sys.stdout.write() does not support giving strings as a list/tuple of parameters
+
+
+def readSettings() -> None:
+    """
+    Function to read settings from file settings.dat.
+    If file is found and data is correct, settings are loaded into global variables for later use.
+    Else if file is:
+        1. Empty: Attempts to write default values into file.
+        2. Invalid: Attempts to erase the file and write default values into file.
+        3. Not found: Attempts to create file and write default values into file.
+    Returns None.
+    """
+    global PROMPT # Global prompt variable
+    isDataLoaded = False # For checking if settings has been read in one of the conditions
+    try:
+        customPrint("Loading settings... ")
+        f = open("settings.dat", 'rb+')
+        data = loadBin(f) # Data is stored in dictionary
+        isDataLoaded = True
+        PROMPT = data["prompt"]
+    
+    except EOFError:
+        if isDataLoaded: # Check if the data was loaded (for checking empty settings.dat file)
+            f.close()
+            customPrint("Done")
+        
+        else: # Try to correct file settings.dat
+            f.truncate(0)
+            customPrint("?!File settings.dat was empty.## Writing default values... ", end='')
+            try:
+                with open("settings.dat", 'wb') as f: # Opening with 'wb' mode even though 'rb+' is perfectly valid 
+                                                      # as file is going to empty but will exist
+                    dumpBin({"prompt":f"{BLUE}%U{RESET}->{BLUE}%S%R{RESET}&&{GREEN}%P{RESET}(S4):~ {YELLOW}${RESET}"}, f)
+            except PermissionError: # Catch permission denies
+                customPrint("?!Permissions for writing data in file settings.dat not available.## ", end='')
+            PROMPT = f"{BLUE}%U{RESET}->{BLUE}%S%R{RESET}&&{GREEN}%P{RESET}(S4):~ {YELLOW}${RESET}"
+            customPrint("Loading default settings...")
+    
+    except FileNotFoundError: # File settings.dat not found
+        customPrint("?!The file settings.dat does not exist.## Creating new file... ", end='')
+        try:
+            with open("settings.dat", 'wb') as f: # Try to create new settings.dat file
+                customPrint("Writing default values...")
+                dumpBin({"prompt":f"{BLUE}%U{RESET}->{BLUE}%S%R{RESET}&&{GREEN}%P{RESET}(S4):~ {YELLOW}${RESET}"}, f)
+        except PermissionError: # Permission denied. Ignore creating file. Maybe on next run the issue can be resolved
+            customPrint("?!Permissions for creating/writing data in file settings.dat not available.##")
+        PROMPT = f"{BLUE}%U{RESET}->{BLUE}%S%R{RESET}&&{GREEN}%P{RESET}(S4):~ {YELLOW}${RESET}"
+        customPrint("Loading default settings...")
+    
+    except (UnpicklingError, KeyError):
+        customPrint("?!Invalid data in file settings.dat.##", end='')
+        choice = input("""Do you want to erase the file and write the default values? (default) [y/n]
+""").lower()
+        if choice in ('', 'y', 'yes'):
+            try:
+                with open("settings.dat", 'wb') as f: # Try to erase file by using 'w' mode and write default values
+                    customPrint("Writing default values... ", end='')
+                    dumpBin({"prompt":f"{BLUE}%U{RESET}->{BLUE}%S%R{RESET}&&{GREEN}%P{RESET}(S4):~ {YELLOW}${RESET}"}, f)
+            except PermissionError:
+                customPrint("?!Permissions for writing data in file settings.dat not available.## ", end='')
+            PROMPT = f"{BLUE}%U{RESET}->{BLUE}%S%R{RESET}&&{GREEN}%P{RESET}(S4):~ {YELLOW}${RESET}"
+            customPrint("Loading default settings...")
+        else:
+            print("?!Invalid option entered.## File will be left as it is. Loading default values...")
+    
+    except Exception as e: # Data not readable in file settings.dat
+        customPrint(f"&&SECOND4:## ??UnknownError:## {e.__class__.__name__}: {e}")
+
+
+def promptUpdater(path, prompt):
+    skip = 0 # skip is used for boosting performance
+    while bool([i for i in ("%%", "%P", "%U", "%S", "%R") if i in prompt.upper()]): # Check if '%' is in string for speed
+        try:
+            for i in range(skip, len(prompt)+1): # I simply don't understand why it needs to be len(prompt)+1 when it can be 
+                                                 # len(prompt)-1 or atleast len(prompt). I tried this in frustration during 
+                                                 # debugging and it worked. If someone knows how, please try to mail me why.
+                if prompt[i] == '%': # Check character for placeholder part
+                    if prompt[i+1] in "UuSsRrPp%": # Valid characters following '%' to be a placeholder
+                        # %(Pp) ->  Path (current working directory)
+                        # %(Rr) ->  Release number
+                        # %(Ss) ->  OS name
+                        # %(Uu) ->  Username
+                        # %(%)  ->  %
+                        if prompt[i+1] in "Uu": prompt = prompt[:i] + getuser() + prompt[i+2:]; skip += len(getuser())
+                        elif prompt[i+1] in "Ss": prompt = prompt[:i] + platSys() + prompt[i+2:]; skip += len(platSys())
+                        elif prompt[i+1] in "Rr":
+                            ver = platVer(); rel = platRel()
+                            if rel == "10": rel = "11" if (int(ver.split('.')[2]) > 22000) else "10"
+                            prompt = prompt[:i] + rel + prompt[i+2:]; skip += len(rel)
+                        elif prompt[i+1] in "Pp": prompt = prompt[:i] + path + prompt[i+2:]; skip += len(path)
+                        elif prompt[i+1] == '%': prompt = prompt[:i+1] + prompt[i+2:]; skip += 1
+                        break
+        except IndexError as e:
+            break
+    return prompt
+
+<h1>printStrings.pyx</h1>
+# Second 4.0 source code
+# 
+# Filename: printStrings.py
+# 
+# This software is a product of Infinite, Inc., and was written by
+# CPythonist (cpythonist.github.io) of the development team of Infinite, Inc.
+# 
+# 
+# Copyright 2024 Infinite Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+# 
+# Please refer https://cpythonist.github.io/second/documentation/secondDoc4.0.html
+# for documentation.
+# Please report any bugs using the email address in https://cpythonist.github.io/contact.html.
+# 
+
+
+def getHelpString(helpStr: dict): # Forms the print string for HELP.
+        line = f"**__COMMAND##**      __FUNCTION##"
+        count = 0
+        for key in helpStr:
+            if not count%3:
+                line += f"\n{key:<15}{helpStr[key]}"
+            elif count%3 == 1:
+                line += f"\n!!{key:<15}##!!{helpStr[key]}##"
+            elif count%3 == 2:
+                line += f"\n**{key:<15}##**{helpStr[key]}##"
+            count += 1
+        return line
+
+
+class Base: # Contains print strings for base.py
+
+    helpStrings = {
+        "&&CD": "Changes the current working direcory (CWD).",
+        "&&CLS": "Clears the screen.",
+        "&&COMMAND": "Executes a terminal command.",
+        "&&COPY": "Copies file/directory to another directory",
+        "&&COPYRIGHT": "Displays the copyright information of Second.",
+        "&&CREDITS": "Displays the credits information of Second.",
+        "&&DATE": "Displays today's date.",
+        "&&DEL": "Deletes a file/directory.",
+        "&&DIR": "Displays the files and directories one level inside a directory.",
+        "&&EXIT": "Terminates Second.",
+        "&&GREET": "Greets the user.",
+        "&&HELP": "Displays this help menu and help outputs of other commands.",
+        "&&MKDIR": "Creates a new directory.",
+        "&&PROMPT": "Changes the prompt variable.",
+        "&&QUIT": "Quits Second.",
+        "&&SECOND": "Displays version compactibility and author.",
+        "&&START": "Opens a file/directory.",
+        "&&TIME": "Displays current time.",
+        "&&TITLE": "Changes the title of the window.",
+        "&&TREE": "Displays a tree of all files and subdirectories inside a directory."
+    }
+    help = f"""&&HELP:## **Info:##
+
+{getHelpString(helpStrings)}
+
+&&**1.## In case a terminal command and Second command names clash, the Second command is given preference and executed.
+&&**2.## Commands are case-insensitive.
+
+"""
+    
+    secondFormatted = """&&SECOND:## **Info:##
+
+&&**Second 4.0##
+Developed by Infinite, Inc.
+Developer: CPythonist (cpythonist.github.io)
+License: Apache-2.0
+
+CPython version used for development: &&!!3.11.6##
+Cython version used for optimisation: &&!!3.0.6##
+Nuitka version used for compilation to binary: &&!!2.0.6##
+Inno Setup version used for installer archive: &&!!6.2.2##
+
+Operating system: &&**Windows##
+Windows version: &&**10, 11##
+"""
+
+    secondUnformatted = """Second 4.0
+Developed by Infinite, Inc.
+Developer: CPythonist (cpythonist.github.io)
+License: Apache-2.0
+
+CPython version used for development: 3.11.6
+Cython version used for optimisation: 3.0.6
+Nuitka version used for compilation to binary: 2.0.6
+Inno Setup version used for installer archive: 6.2.2
+
+Operating system: Windows
+Windows version: 10, 11
+"""
+
+    helpCd = """
+!!Changes the current working directory.##
+
+&&__Syntax:##
+    CD path
+
+    ^^path##    Directory to change into.
+"""
+
+    helpCls = """
+!!Clears the output screen.##
+
+&&__Syntax:##
+    CLS
+"""
+
+    helpCommand = """
+!!Runs terminal commands on Second.##
+
+&&__Syntax:##
+    COMMAND command
+
+    ^^command## -> Command to execute in terminal.
+"""
+
+    helpCopy = """
+!!Copies a file/directory to another directory.##
+
+&&__Syntax:##
+    COPY source dest
+
+    ^^source## -> Path of source file/directory on the computer.
+    ^^dest## -> Destination directory for copying source into.
+"""
+
+    helpCopyright = """
+!!Displays the copyright information on Second.##
+
+&&__Syntax:##
+    COPYRIGHT
+"""
+    
+    helpCredits = """
+!!Displays the credits information on Second.##
+
+&&__Syntax:##
+    CREDITS
+"""
+
+    helpDate = """
+!!Displays the current system date.##
+
+&&__Syntax:##
+    DATE
+"""
+
+    helpDel = """
+!!Deletes a file/directory.##
+
+&&__Syntax:##
+    DEL path
+
+    ^^path## -> Path of file/directory to be deleted.
+"""
+
+    helpDir = """
+!!Displays the files and directories one level inside a directory.##
+
+&&__Syntax:##
+    DIR dir
+
+    ^^dir## -> Directory which needs to be examined.
+"""
+
+    helpEof = """
+!!Exits the program.##
+
+&&__Syntax:##
+    ^Z (CTRL+Z)
+"""
+
+    helpExit = """
+!!Exits the program.##
+
+&&__Syntax:##
+    EXIT
+"""
+
+    helpGreet = """
+!!Greets the user.##
+
+&&__Syntax:##
+    GREET [option]
+
+    ^^option## -> Specify option to greet the user.
+        1 - Greet option 1 (default)
+        2 - Greet option 2
+"""
+
+    helpHelp = """
+!!Displays help menu.##
+
+&&__Syntax:##
+    HELP [command]
+
+    ^^command## -> Displays help for command with the name "command".
+"""
+
+    helpMkdir = """
+!!Creates a new directory.##
+
+&&__Syntax:##
+    MKDIR newdir
+
+    ^^newdir## -> Directory name for the new directory (relative or full path, or just directory name)
+"""
+
+    helpPrompt = """
+!!Changes the prompt variable of the program.##
+
+&&__Syntax:##
+    PROMPT prompt
+
+    ^^prompt## -> New prompt for Second
+        %U - Username
+        %S - OS name
+        %R - Release number
+        %P - Path (current working directory)
+        %% - Percentage sign
+"""
+
+    helpQuit = """
+!!Quits the program.##
+
+&&__Syntax:##
+    QUIT
+"""
+
+    helpSecond = """
+!!Displays the developer and operating system information of Second 4.##
+
+&&__Syntax:##
+    SECOND [-c]
+
+    ^^-c## -> Copies the command output to clipboard
+"""
+
+    helpShutdown = """
+!!Shuts down the computer.##
+
+&&__Syntax:##
+    SHUTDOWN [options]
+
+    ^^options## -> Customise options for shutdown.
+        -s - Option for shutdown.
+        -r - Option for restart.
+        -t - Sets countdown for SHUTDOWN operation.
+        -h - Enables hybrid mode while startup.
+
+If only '-h' and/or '-t' options are used, then by default '-s' argument will be executed.
+"""
+
+    helpStart = """
+!!Starts a file, directory or executable.##
+
+&&__Syntax:##
+    START name [-admin]
+
+    ^^name##   -> Relative/Full path of file/directory, or name of program present in the PATH variable.
+    ^^-admin## -> Run as Administrator.
+"""
+
+    helpTime = """
+!!Displays the current system time.##
+
+&&__Syntax:##
+    TIME
+"""
+
+    helpTitle = """
+!!Changes the title of the console window.##
+
+&&__Syntax:##
+    TITLE title
+
+    ^^title## -> New title for the Second window.
+"""
+
+    helpTree = """
+!!Displays a tree of all files and subdirectories inside a directory.##
+
+&&__Syntax:##
+    TREE dir
+
+    ^^dir## -> Directory which needs to be examined.
+"""
+
+    copyright = """&&SECOND:## **Copyright:##
+Copyright (c) 2024 Infinite Inc.
+Written by Cpythonist (http://cpythonist.github.io/)
+All rights reserved.
+"""
+
+    credits = """&&SECOND:## **Credits:##
+Thanks to all the authors and contributors of the programming language and libraries used in this program:
+
+CPython:     ^^http://python.org/##
+
+psutil:      ^^http://github.com/giampaolo/##
+requests:    ^^http://github.com/psf/##
+
+Nuitka:      ^^http://github.com/Nuitka##
+Cython:      ^^http://github.com/cython/##
+Inno Setup:  ^^http://github.com/jrsoftware/##
+"""
+
+<h1>second4.py</h1>
+# Second 4.0 source code
+#
+# Filename: second4.py
+# 
+# This software is a product of Infinite, Inc., and was written by
+# CPythonist (http://cpythonist.github.io/) of the development team of Infinite, Inc.
+#
+# 
+# Copyright 2024 Infinite Inc.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+# 
+# Improvements aimed for Second 4.0:
+#   1. Added commands from previous versions (Second 1 and 2)
+#   2. Added dark mode support (extremely unstable and under development).**
+#   3. Higher efficiency using the cmd module of the standard library of 
+#      CPython-3.11.6 for greater performance.
+#   4. Consoles without ANSI support can also run the program.**
+#   5. Easy usage by removing the necessity of quotes for all arguments.
+#   6. Add update feature.
+#   7. Add functionality to execute terminal commands from Second.
+#   ** Implementation removed.
+#
+# Please refer https://cpythonist.github.io/second/documentation/secondDoc4.0.html
+# for documentation.
+# Please report any bugs at the email address in https://cpythonist.github.io/contact.html.
+# 
+# Please note that in settings.dat, the DARKMODE (dictionary key "darkmode": (True/False/"auto") variable 
+# has not been removed. This is left as such as future versions may include a (hopefully) fully-functional 
+# colour mode support.
+# 
+
+def main():
+    # The "try-wrap"
+    try:
+        # Imports
+        # Imports are declared inside try statement only in this program so as to catch any Exception and 
+        # log it into error files. This is the program second4.exe and thus any error needs to be logged.
+        from logging import DEBUG, getLogger, FileHandler, Formatter
+        from os import makedirs, getpid
+        from os.path import isdir
+        from subprocess import Popen, PIPE
+        from sys import exit as sysExit, argv
+        from traceback import format_exc as formatExcep
+        import base
+        import ctypes, globalNamespace as gn
+
+        # Initialisation for use of escape codes
+        base.system('')
+
+        gn.readSettings() # Read user settings from settings.dat
+        ctypes.windll.kernel32.SetConsoleTitleW("Second 4") # Set title of console window
+
+        prog = base.Second4() # Create object prog from Second4
+        gn.customPrint(f"""
+&&**Infinite Second {base.__version__}##
+Written by CPythonist (http://cpythonist.github.io/)
+!!Developed in CPython 3.11.6
+Optimised using Cython 3.0.6
+Compiled using Nuitka 1.9.2
+Compressed to installer executable using Inno Setup 6.2.2
+Thanks to __stackoverflow.com## !!for the necessary help!##
+
+Type "help" without the quotes for the help menu.
+""")
+        
+        # Run the updater as a separate process. Given parameters are the process ID of self process to be passed to installer.
+        # Popen(["second4Updater", str(getpid())], executable=argv[0], stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, shell=False)
+        # Didn't use this as the problem of FileNotFoundError couldn't be resolved (the program couldn't identify the updater and update
+        # installer files).
+        
+        while True: # KeyboardInterrupts to be caught in cmd module was either not possible or was difficult to implement, OR IDK how to implement
+            try:
+                prog.cmdloop()
+                prog.prompt = gn.promptUpdater(prog.path, prog.realPrompt)
+            except FileNotFoundError:
+                gn.customPrint(f"&&SECOND4:## ??CriticalError:## The current working directory \"{prog.path}\" does not exist. Attempting to change to parent directory...")
+                exist = False
+                temp = prog.path
+                while not exist:
+                    if isdir(temp:='\\'.join(temp.split('\\')[:-1])):
+                        prog.path = temp; exist = True
+                        gn.customPrint(f"&&SECOND4:## **Info:## The parent directory \"{temp}\" exists and the current working directory has been changed to it.\n")
+                    else: gn.customPrint(f"&&SECOND4:## ??CriticalError:## The parent directory \"{temp}\" does not exist. Trying for the next parent directory...")
+            except KeyboardInterrupt as e:
+                print()
+
+    except Exception as e: # Handle fatal Exceptions and log the error output.
+        gn.customPrint(f"&&SECOND4:## ??UnknownError:## {e.__class__.__name__}: {e}\n", end='')
+        makedirs("errOut", mode=0o777, exist_ok=True)
+        handler = FileHandler(filename="errOut\\mainErrLog.log", mode="a")
+        handler.setLevel(DEBUG)
+        handler.setFormatter(Formatter("\n%(asctime)s\n%(levelname)s: %(name)s: %(message)s"))
+        logger = getLogger("main")
+        logger.addHandler(handler)
+        logger.fatal(f"Fatal Exception:\n{formatExcep()}")
+        gn.customPrint("-" * (25 + len(f"{e.__class__.__name__}{e}")) + "\n")
+        sysExit(1)
+
+if __name__ == "__main__":
+    main()
+                </pre>
+            </code>
+        </div>
+
+<h1>setupCython.py</h1>
+from setuptools import setup
+from Cython.Build import cythonize
+
+setup(
+    ext_modules = cythonize("*.pyx")
+)
+
+        <footer>
+            <a href="http://github.com/cpythonist">
+                <img src="/images/meCpythonist.png" style="width: 2%; vertical-align: middle;">
+            </a>
+            <a href="http://github.com/cpythonist" style="text-decoration: none; color: gray">&nbsp;&nbsp;CPythonist</a>
+        </footer>
+    </body>
+</html>
